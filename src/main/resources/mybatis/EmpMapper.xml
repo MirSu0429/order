@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.order.mapper.EmpMapper">
+	
+	<resultMap type="com.order.entity.Emp" id="empAndImage">
+		<id column="id" property="id"/>
+		<result column="empno" property="empno"/>
+		<result column="password" property="password"/>
+		<result column="plevel" property="plevel"/>
+		<result column="ename" property="ename"/>
+		<result column="age" property="age"/>
+		<result column="sex" property="sex"/>
+		<result column="mobile" property="mobile"/>
+		<result column="address" property="address"/>
+		<result column="hiredate" property="hiredate"/>
+		<association property="image" javaType="Image">
+			<id column="imageid" property="id"/>
+			<result column="imgpath" property="imgPath"/>
+		</association>
+	</resultMap>
+	<!-- 查全部 -->
+	<select id="queryEmp" resultMap="empAndImage">
+		select e.id,empno,password,plevel,ename,age,sex,mobile,address,hiredate ,i.imgpath 
+    	from t_emp e left join  t_image i on e.imageid = i.id
+	</select>
+	<!-- 查一个 -->
+	<select id="getEmp" parameterType="int" resultMap="empAndImage">
+		select  e.id,empno,password,plevel,ename,age,sex,mobile,address,hiredate ,i.imgpath 
+		from t_emp e left join  t_image i on e.imageid = i.id
+		where e.id = #{id}
+	</select>
+	<!--登录查询 -->
+	<select id="Login" resultType="com.order.entity.Emp">
+		select  e.id,empno,password,plevel,ename,age,sex,mobile,address,hiredate ,i.imgpath 
+		from t_emp e left join  t_image i on e.imageid = i.id
+		where empno = #{empno} and  password = #{password}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateEmp" parameterType="com.order.entity.Emp">
+		update t_emp 
+	<set>
+		<if test="password!=null and password!=''">
+			password=#{password},
+		</if>
+		<if test="plevel!=null ">
+			plevel=#{plevel},
+		</if>
+		<if test="ename!=null and ename!=''">
+			ename=#{ename},
+		</if>
+		<if test="age!=null">
+			age=#{age},
+		</if>
+		<if test="sex!=null and sex!=''">
+			sex=#{sex},
+		</if>
+		<if test="address!=null and address!=''">
+			address=#{address},
+		</if>
+		<if test="mobile!=null and mobile!=''">
+			mobile=#{mobile},
+		</if>
+		<if test="hiredate!=null ">
+			hiredate=#{hiredate},
+		</if>
+	</set>
+		where id=#{id}
+	</update>
+	<!-- 设置员工的头像 -->
+	<update id="updateEmpImageid" >
+		update t_emp set imageid=#{imageId} where id=#{id}
+	</update>
+	<!-- 添加 -->
+	<insert id="insertEmp" parameterType="com.order.entity.Emp">
+		insert into t_emp 
+		(id,empno,password,plevel,ename,age,sex,mobile,address,hiredate ) 
+		values(sql_id.nextval,#{empno},#{password},#{plevel},#{ename},#{age},#{sex},#{mobile},#{address},#{hiredate})
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteEmp" >
+		delete from  t_emp  where id !=#{myId} and id  in 
+		<foreach collection="ids" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

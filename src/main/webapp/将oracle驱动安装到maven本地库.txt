@@ -1,0 +1,13 @@
+ ###mvn install:install-file为maven安装本地jar包到本地库的命令
+###-Dfile=D:\共享\userlib\oracle驱动\ojdbc14.jar为本地驱动文件路径
+###-DgroupId=com.oracle为maven库中oracle的groupId
+###-DartifactId=ojdbc14为maven库中oracle的artifactId
+###-Dversion=10.2.0.3.0为maven库中oracle的版本号
+##完整命令
+mvn install:install-file -Dfile=D:\共享资料\userlib\oracle驱动\ojdbc14.jar -DgroupId=com.oracle -DartifactId=ojdbc14 -Dversion=10.2.0.3.0 -Dpackaging=jar
+###引用oracle驱动
+<dependency> 
+  <groupId>com.oracle</groupId> 
+  <artifactId>ojdbc14</artifactId>   
+  <version>10.2.0.3.0</version>
+</dependency>

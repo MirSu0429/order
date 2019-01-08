@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.order.mapper.ImageMapper">
+	
+	<insert id="insertImage" parameterType="Image" >
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			select sql_id.nextval from dual
+		</selectKey>
+		insert into t_image
+		(id,name,imgPath,imgType,imgSize  ) 
+		values(#{id},#{name},#{imgPath},#{imgType},#{imgSize})
+	</insert>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.order.mapper.FoodMapper">
+	
+	<resultMap type="Food" id="foodAndImage">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="price" property="price"/>
+		<result column="recommend" property="recommend"/>
+		<result column="intro" property="intro"/>
+		<result column="decription" property="decription"/>
+		<association property="image" javaType="Image">
+			<id column="imageid" property="id"/>
+			<result column="imgpath" property="imgPath"/>
+		</association>
+	</resultMap>
+	<!-- 查全部 -->
+	<select id="queryFood" resultMap="foodAndImage">
+		select f.id ,f.name,price,recommend,intro,decription,i.imgpath
+		from t_food f left join  t_image i on f.imageid = i.id
+	</select>
+	<!-- 查一个 -->
+	<select id="getFood" parameterType="int" resultMap="foodAndImage">
+		select f.id ,f.name,price,recommend,intro,decription,i.imgpath
+		from t_food f left join  t_image i on f.imageid = i.id
+		where f.id = #{id}
+	</select>
+	<!-- 修改 -->
+	<update id="updateFood" parameterType="Food">
+		update t_food 
+	<set>
+		<if test="name!=null and name!=''">
+			name=#{name},
+		</if>
+		<if test="price!=null ">
+			price=#{price},
+		</if>
+		<if test="recommend!=null ">
+			recommend=#{recommend},
+		</if>
+		<if test="intro!=null and intro!=''">
+			intro=#{intro},
+		</if>
+		<if test="decription!=null and decription!=''">
+			decription=#{decription},
+		</if>
+	</set>
+		where id=#{id}
+	</update>
+	<!-- 设置菜品图片 -->
+	<update id="updateFoodImageid" >
+		update t_food set imageid=#{imageId} where id=#{id}
+	</update>
+	<!-- 添加 -->
+	<insert id="insertFood" parameterType="Food">
+		insert into t_food 
+		(id,name,price,recommend,intro,decription ) 
+		values(sql_id.nextval,#{name},#{price},#{recommend},#{intro},#{decription})
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteFood" parameterType="int">
+		delete from  t_food  where  id  in 
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

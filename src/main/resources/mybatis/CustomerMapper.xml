@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace : 命名空间，作用是对sql语句进行分类管理
+	注意：如果使用mapper代理的方式进行开发，namespace有着特殊的作用
+ -->
+<mapper namespace="com.order.mapper.CustomerMapper">
+	
+	<select id="getCustomer" parameterType="int" resultType="Customer" >
+		select
+			 id,name,sex,mobile,eatCount,expendMoney,vipState 
+		from 
+			 t_customer 
+	    where
+			 id=#{id} 
+	</select>
+	<select id="queryCustomers" resultType="Customer" >
+		select 
+			id,name,sex,mobile,eatCount,expendMoney,vipState
+		from 
+			t_customer order by id
+	</select>
+	<delete id="deleteCustomer" parameterType="int">
+		delete from t_customer where id=#{id}
+	</delete>
+	<update id="updateCustomer" parameterType="Customer">
+		update t_customer 
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="sex!=null and sex!=''">
+				sex=#{sex},
+			</if>
+			<if test="mobile!=null and mobile!=''">
+				mobile=#{mobile},
+			</if>
+			<if test="eatCount!=null">
+				eatCount=#{eatCount},
+			</if>
+			<if test="expendMoney!=null">
+				expendMoney=#{expendMoney},
+			</if>
+			<if test="vipState!=null">
+				vipState=#{vipState},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<insert id="insertCustomer" parameterType="Customer">
+		insert into 
+			t_customer
+			<trim prefix="(" suffixOverrides="," suffix=")">
+				id,
+				<if test="name!=null and name!=''">name,</if>
+				<if test="sex!=null and sex!=''">sex,</if>
+				<if test="mobile!=null and mobile!=''">mobile,</if>
+				<if test="eatCount!=null">eatCount,</if>
+				<if test="expendMoney!=null">expendMoney,</if>
+				<if test="vipState!=null">vipState,</if>
+			</trim>
+		values 
+			<trim prefix="(" suffixOverrides="," suffix=")">
+				sql_id.nextval,
+				<if test="name!=null and name!=''">#{name},</if>
+				<if test="sex!=null and sex!=''">#{sex},</if>
+				<if test="mobile!=null and mobile!=''">#{mobile},</if>
+				<if test="eatCount!=null">#{eatCount},</if>
+				<if test="expendMoney!=null">#{expendMoney},</if>
+				<if test="vipState!=null">#{vipState},</if>
+			</trim>
+	</insert>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace : 命名空间，作用是对sql语句进行分类管理
+	注意：如果使用mapper代理的方式进行开发，namespace有着特殊的作用
+ -->
+<mapper namespace="com.order.mapper.OrderMapper">
+
+	<resultMap type="Order" id="orderAndCustomerResultMap">
+		<id property="id" column="id"/>
+		<result property="startTime" column="startTime"/>
+		<result property="checkTime" column="checkTime"/>
+		<result property="totalPrice" column="totalPrice"/>
+		<result property="discountPrice" column="discountPrice"/>
+		<result property="state" column="state"/>
+		<association property="customer" javaType="Customer">
+			<id property="id" column="id"/>
+			<result property="name" column="name"/>
+			<result property="sex" column="sex"/>
+			<result property="mobile" column="mobile"/>
+			<result property="eatCount" column="eatCount"/>
+			<result property="expendMoney" column="expendMoney"/>
+			<result property="vipState" column="vipState"/>
+		</association>
+	</resultMap>	
+	<select id="getOrder" parameterType="int" resultMap="orderAndCustomerResultMap" >
+		select
+			 o.id,startTime,checkTime,totalPrice,discountPrice,state,customerid,name,sex,mobile,eatCount,expendMoney,vipState
+		from 
+			 t_Order o,t_customer c
+	    where
+			 id=#{id} and o.customerid=c.id
+	</select>
+	<select id="queryOrders" resultType="Order" >
+		select 
+			id,startTime,checkTime,totalPrice,discountPrice,state,customerid
+		from 
+			t_Order order by id
+	</select>
+	<delete id="deleteOrder" parameterType="int">
+		delete from t_Order where id=#{id}
+	</delete>
+	<update id="updateOrder" parameterType="Order">
+		update t_Order 
+		<set>
+			<if test="startTime!=null">
+				startTime=#{startTime},
+			</if>
+			<if test="checkTime!=null">
+				checkTime=#{checkTime},
+			</if>
+			<if test="totalPrice!=null">
+				totalPrice=#{totalPrice},
+			</if>
+			<if test="discountPrice!=null">
+				discountPrice=#{discountPrice},
+			</if>
+			<if test="state!=null and state!=''">
+				state=#{state},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<insert id="InsertOrder" parameterType="Order">
+		insert into 
+			t_Order (name,sex,mobile,eatCount,expendMoney,vipState,customerid) 
+		values 
+			(#{name},#{sex},#{mobile},#{eatCount},#{expendMoney},#{vipState},#{customer.id})
+	</insert>
+</mapper>

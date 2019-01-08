@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace : 命名空间，作用是对sql语句进行分类管理
+	注意：如果使用mapper代理的方式进行开发，namespace有着特殊的作用
+ -->
+<mapper namespace="com.order.mapper.OrderItemMapper">
+
+	<resultMap type="OrderItem" id="orderCustomerOrderItemTableResultMap">
+		<id property="id" column="id"/>
+		<result property="foodCount" column="foodCount"/>
+		<result property="foodPrice" column="foodPrice"/>
+		<result property="foodName" column="foodName"/>
+		<result property="state" column="state"/>
+		<association property="customer" javaType="Customer"
+				select="mybatis.CustomerMapper.getCustomer" column="id">
+		</association>
+		<association property="order" javaType="Order"
+					select="mybatis.OrderMapper.getOrder" column="id">
+		</association>
+		<association property="food" javaType="Food"
+					select="mybatis.FoodMapper.getFood" column="id">
+		</association>
+		<association property="table" javaType="DiningTable"
+					select="mybatis.DiningTableMapper.getDiningTable" column="id">
+		</association>
+	</resultMap>	
+	<select id="getOrderItem" parameterType="int" resultMap="orderCustomerOrderItemTableResultMap" >
+		select
+			 id,foodCount,foodPrice,foodName,state
+		from 
+			 t_OrderItem
+	    where
+			 id=#{id}
+	</select>
+	<select id="queryOrderItems" resultType="OrderItem" >
+		select 
+			id,foodCount,foodPrice,foodName,state
+		from 
+			t_OrderItem order by id
+	</select>
+	<delete id="deleteOrderItem" parameterType="int">
+		delete from t_OrderItem where id=#{id}
+	</delete>
+	<update id="updateOrderItem" parameterType="OrderItem">
+		update t_OrderItem 
+		<set>
+			<if test="foodCount!=null">
+				foodCount=#{foodCount},
+			</if>
+			<if test="foodPrice!=null">
+				foodPrice=#{foodPrice},
+			</if>
+			<if test="foodName!=null and foodName=''">
+				foodName=#{foodName},
+			</if>
+			<if test="state!=null and state!=''">
+				state=#{state},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<insert id="InsertOrderItem" parameterType="OrderItem">
+		insert into 
+			t_OrderItem (foodCount,foodPrice,foodName,state,tableid,customerid,orderid,foodid) 
+		values 
+			(#{foodCount},#{foodPrice},#{foodName},#{state},#{table.id},#{customer.id},#{order.id},#{food.id})
+	</insert>
+</mapper>
